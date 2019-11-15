@@ -1573,6 +1573,22 @@ int FS_Read( void *buffer, int len, fileHandle_t f ) {
 	}
 }
 
+int FS_Tell( fileHandle_t f ) {
+	if ( !fs_searchpaths ) {
+		Com_Error( ERR_FATAL, "Filesystem call made without initialization" );
+	}
+
+	if ( !f ) {
+		return 0;
+	}
+
+	if (fsh[f].zipFile == qfalse) {
+		return ftell( fsh[f].handleFiles.file.o);
+	} else {
+		return 0;
+	}
+}
+
 /*
 =================
 FS_Write

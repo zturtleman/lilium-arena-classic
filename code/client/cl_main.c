@@ -1001,6 +1001,7 @@ void CL_ReadDemoMessage( void ) {
 	if ( buf.cursize > buf.maxsize ) {
 		Com_Error (ERR_DROP, "CL_ReadDemoMessage: demoMsglen > MAX_MSGLEN");
 	}
+	int demoFileOffset = FS_Tell( clc.demofile );
 	r = FS_Read( buf.data, buf.cursize, clc.demofile );
 	if ( r != buf.cursize ) {
 		Com_Printf( "Demo file was truncated.\n");
@@ -1010,7 +1011,7 @@ void CL_ReadDemoMessage( void ) {
 
 	clc.lastPacketTime = cls.realtime;
 	buf.readcount = 0;
-	CL_ParseServerMessage( &buf );
+	CL_ParseServerMessage( &buf, demoFileOffset );
 }
 
 /*
@@ -1124,6 +1125,15 @@ void CL_PlayDemo_f( void ) {
 	// check for an extension .DEMOEXT_?? (?? is protocol)
 	ext_test = strrchr(arg, '.');
 	
+#if 1
+	if(ext_test && !Q_stricmpn(ext_test + 1, "dm3", 3))
+	{
+		protocol = 43;
+		Com_sprintf(name, sizeof(name), "demos/%s", arg);
+		FS_FOpenFileRead(name, &clc.demofile, qtrue);
+	}
+	else
+#endif
 	if(ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
 	{
 		protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
@@ -1184,6 +1194,7 @@ void CL_PlayDemo_f( void ) {
 	while ( clc.state >= CA_CONNECTED && clc.state < CA_PRIMED ) {
 		CL_ReadDemoMessage();
 	}
+	Com_Printf( "DEBUG: CL_PlayDemo_f: Completed\n" );
 	// don't get the first snapshot this frame, to prevent the long
 	// time from the gamestate load from messing causing a time skip
 	clc.firstDemoFrameSkipped = qfalse;
@@ -2917,7 +2928,7 @@ void CL_PacketEvent( netadr_t from, msg_t *msg ) {
 	clc.serverMessageSequence = LittleLong( *(int *)msg->data );
 
 	clc.lastPacketTime = cls.realtime;
-	CL_ParseServerMessage( msg );
+	CL_ParseServerMessage( msg, -1 );
 
 	//
 	// we don't know if it is ok to save a demo message until
@@ -3613,11 +3624,7 @@ void CL_Init( void ) {
 	cl_pitchspeed = Cvar_Get ("cl_pitchspeed", "140", CVAR_ARCHIVE);
 	cl_anglespeedkey = Cvar_Get ("cl_anglespeedkey", "1.5", 0);
 
-#if 0 //#ifdef ELITEFORCE
-	cl_maxpackets = Cvar_Get ("cl_maxpackets", "43", CVAR_ARCHIVE );
-#else
 	cl_maxpackets = Cvar_Get ("cl_maxpackets", "30", CVAR_ARCHIVE );
-#endif
 	cl_packetdup = Cvar_Get ("cl_packetdup", "1", CVAR_ARCHIVE );
 
 	cl_run = Cvar_Get ("cl_run", "1", CVAR_ARCHIVE);

@@ -949,6 +949,41 @@ entityState_t communication
 
 byte pVectors[PVECTOR_NUM][PVECTOR_BYTES] =
 {
+#if 1 // Extracted from quake3.exe (1.16n) offset 0xB691C to 0x174
+	// cat quake3.exe | tail -c+747805 | head -c372 | xxd -i
+	// 12 bytes but last 4 are always 0x00
+	{0x60, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x60, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0xe1, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00},
+	{0x60, 0x80, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00},
+	{0xe0, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0xe0, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00},
+	{0x40, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x20, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x60, 0x80, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00},
+	{0xed, 0x07, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00},
+	{0xe0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0xed, 0x07, 0x00, 0x00, 0x00, 0x30, 0x00, 0x00},
+	{0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0xe0, 0xc0, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00},
+	{0x60, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00},
+	{0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0xe1, 0x00, 0x00, 0x00, 0x04, 0x20, 0x00, 0x00},
+	{0xe1, 0x00, 0xc0, 0x01, 0x20, 0x20, 0x00, 0x00},
+	{0xe0, 0xc0, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00},
+	{0x60, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x40, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x60, 0xc0, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00},
+	{0x60, 0xc0, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00},
+	{0x60, 0x80, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00},
+	{0x60, 0x80, 0x00, 0x00, 0x00, 0x30, 0x00, 0x00},
+	{0xe0, 0x80, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00},
+	{0x20, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{0x60, 0x80, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00},
+#else // ioEF
 	{0x60, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 	{0x60, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 	{0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -980,6 +1015,7 @@ byte pVectors[PVECTOR_NUM][PVECTOR_BYTES] =
 	{0xe0, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 	{0xe0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 	{0x60, 0x80, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00},
+#endif
 };
 
 #endif
@@ -1013,7 +1049,11 @@ typedef struct {
 netField_t      entityStateFields[] =
 {
 { NETF(eType), 8 },
+#if 0 // ZTM: TODO: try value from Q3 1.32
+{ NETF(eFlags), 19 },
+#else
 { NETF(eFlags), 24 },
+#endif
 { NETF(pos.trType), 8 },
 { NETF(pos.trTime), 32 },
 { NETF(pos.trDuration), 32 },
@@ -1049,7 +1089,11 @@ netField_t      entityStateFields[] =
 { NETF(otherEntityNum), GENTITYNUM_BITS },
 { NETF(otherEntityNum2), GENTITYNUM_BITS },
 { NETF(groundEntityNum), GENTITYNUM_BITS },
+#if 1 // value from Q3 1.32 -- seems correct
+{ NETF(loopSound), 8 },
+#else
 { NETF(loopSound), 16 },
+#endif
 { NETF(constantLight), 32 },
 { NETF(modelindex), 8 },
 { NETF(modelindex2), 8 },
@@ -1062,6 +1106,7 @@ netField_t      entityStateFields[] =
 { NETF(weapon), 8 },
 { NETF(legsAnim), 8 },
 { NETF(torsoAnim), 8 },
+//{ NETF(generic1), 8 },
 };
 #else
 netField_t	entityStateFields[] = 
@@ -1405,6 +1450,10 @@ void MSG_ReadDeltaEntity( msg_t *msg, entityState_t *from, entityState_t *to,
 		// Read in the vector index and check whether there is a predefined one or not.
 		vectorIndex = MSG_ReadBits( msg, PVECTOR_BITS );
 
+		if ( print ) { // ### ZTM: TODO: Remove this after loading demo works.
+			Com_Printf( "vectorIndex:%d ", vectorIndex );
+		}
+
 		if (vectorIndex == PVECTOR_NUM)
 		{
 			for (i = 0; i + 8 < numFields; i += 8)
@@ -1496,7 +1545,7 @@ void MSG_ReadDeltaEntity( msg_t *msg, entityState_t *from, entityState_t *to,
 		} else {
 			endBit = ( msg->readcount - 1 ) * 8 + msg->bit - GENTITYNUM_BITS;
 		}
-		Com_Printf( " (%i bits)\n", endBit - startBit  );
+		Com_Printf( " (%i bits, msg bits %i)\n", endBit - startBit, msg->bit ); // ZTM: Added bits
 	}
 }
 
@@ -1512,8 +1561,8 @@ plyer_state_t communication
 // using the stringizing operator to save typing...
 #define	PSF(x) #x,(size_t)&((playerState_t*)0)->x
 
-// ### ZTM: FIXME: This is obviously wrong for Q3 1.16
-#if 0 //def ELITEFORCE
+// ###: ZTM: FIXME: parsing playerstate doesn't work correctly for q3 1.16n (demo001.dm3)
+#ifdef ELITEFORCE
 netField_t      playerStateFields[] =
 {
 { PSF(commandTime), 32 },
@@ -1535,20 +1584,27 @@ netField_t      playerStateFields[] =
 { PSF(delta_angles[2]), 16 },
 { PSF(groundEntityNum), GENTITYNUM_BITS },
 { PSF(legsTimer), 8 },
+#if 0 // ZTM: FIXME: not sure if order should match struct
+{ PSF(legsAnim), 8 },
+{ PSF(torsoTimer), 12 },
+{ PSF(torsoAnim), 8 },
+#else // order in ioEF
 { PSF(torsoTimer), 12 },
 { PSF(legsAnim), 8 },
 { PSF(torsoAnim), 8 },
+#endif
 { PSF(movementDir), 4 },
+#if 0
+{ PSF(grapplePoint[0]), 0 },
+{ PSF(grapplePoint[1]), 0 },
+{ PSF(grapplePoint[2]), 0 },
+#endif
 { PSF(eFlags), 16 },
 { PSF(eventSequence), 16 },
 { PSF(events[0]), 8 },
 { PSF(events[1]), 8 },
-{ PSF(events[2]), 8 },
-{ PSF(events[3]), 8 },
 { PSF(eventParms[0]), 8 },
 { PSF(eventParms[1]), 8 },
-{ PSF(eventParms[2]), 8 },
-{ PSF(eventParms[3]), 8 },
 { PSF(externalEvent), 10 },
 { PSF(externalEventParm), 8 },
 { PSF(clientNum), 8 },
@@ -1562,6 +1618,11 @@ netField_t      playerStateFields[] =
 { PSF(damageYaw), 8 },
 { PSF(damagePitch), 8 },
 { PSF(damageCount), 8 },
+#if 1 // ZTM: based on string order in quake3.exe (1.16n) it seems to be last(?).
+{ PSF(grapplePoint[0]), 0 },
+{ PSF(grapplePoint[1]), 0 },
+{ PSF(grapplePoint[2]), 0 },
+#endif
 };
 #else
 netField_t	playerStateFields[] = 
@@ -1797,6 +1858,7 @@ void MSG_WriteDeltaPlayerstate( msg_t *msg, struct playerState_s *from, struct p
 MSG_ReadDeltaPlayerstate
 ===================
 */
+//#define SKIP_PLAYER // TMP: HACK: skip first player state to see how far I can get.
 void MSG_ReadDeltaPlayerstate (msg_t *msg, playerState_t *from, playerState_t *to ) {
 	int			i, lc = 0;
 	int			bits;
@@ -1843,10 +1905,31 @@ void MSG_ReadDeltaPlayerstate (msg_t *msg, playerState_t *from, playerState_t *t
 			Com_Error(ERR_DROP, "invalid playerState field count");
 	}
 
+#ifdef SKIP_PLAYER
+	int skipBits = Cvar_VariableIntegerValue( "skipPlayerBits" );
+	if ( !skipBits ) {
+		// 300 get farther but not correct size.
+		skipBits = 300;
+	}
+	while ( skipBits > 0 ) {
+		if ( skipBits >= 32 ) {
+			MSG_ReadBits( msg, 32 );
+			skipBits -= 32;
+		} else {
+			MSG_ReadBits( msg, skipBits );
+			skipBits = 0;
+		}
+	}
+#endif
+
 	for ( i = 0, field = playerStateFields ; i < lc ; i++, field++ ) {
 		fromF = (int *)( (byte *)from + field->offset );
 		toF = (int *)( (byte *)to + field->offset );
 
+#ifdef SKIP_PLAYER
+		// no change
+		*toF = *fromF;
+#else
 		if ( ! MSG_ReadBits( msg, 1 ) ) {
 			// no change
 			*toF = *fromF;
@@ -1860,23 +1943,24 @@ void MSG_ReadDeltaPlayerstate (msg_t *msg, playerState_t *from, playerState_t *t
 					trunc -= FLOAT_INT_BIAS;
 					*(float *)toF = trunc; 
 					if ( print ) {
-						Com_Printf( "%s:%i ", field->name, trunc );
+						Com_Printf( "[%d]%s:%i ", i, field->name, trunc );
 					}
 				} else {
 					// full floating point value
 					*toF = MSG_ReadBits( msg, 32 );
 					if ( print ) {
-						Com_Printf( "%s:%f ", field->name, *(float *)toF );
+						Com_Printf( "[%d]%s:%f ", i, field->name, *(float *)toF );
 					}
 				}
 			} else {
 				// integer
 				*toF = MSG_ReadBits( msg, field->bits );
 				if ( print ) {
-					Com_Printf( "%s:%i ", field->name, *toF );
+					Com_Printf( "[%d]%s:%i ", i, field->name, *toF );
 				}
 			}
 		}
+#endif
 	}
 	#ifdef ELITEFORCE
 	if(!msg->compat)

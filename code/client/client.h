@@ -524,7 +524,7 @@ void CL_Voip_f( void );
 #endif
 
 void CL_SystemInfoChanged( void );
-void CL_ParseServerMessage( msg_t *msg );
+void CL_ParseServerMessage( msg_t *msg, int demoFileOffset );
 
 //====================================================================
 

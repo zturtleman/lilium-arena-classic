@@ -121,6 +121,8 @@ void CL_ParsePacketEntities( msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *n
 
 		if ( msg->readcount > msg->cursize ) {
 			Com_Error (ERR_DROP,"CL_ParsePacketEntities: end of message");
+			Com_Printf( "WARNING: CL_ParsePacketEntities: end of message\n" );
+			break;
 		}
 
 		while ( oldnum < newnum ) {
@@ -464,7 +466,7 @@ static void CL_ParseServerInfo(void)
 CL_ParseGamestate
 ==================
 */
-void CL_ParseGamestate( msg_t *msg ) {
+void CL_ParseGamestate( msg_t *msg, int demoFileOffset ) {
 	int				i;
 	entityState_t	*es;
 	int				newnum;
@@ -493,8 +495,11 @@ void CL_ParseGamestate( msg_t *msg ) {
 		#else
 		if ( cmd == svc_EOF )
 		#endif
+		{
+			Com_Printf( "WARNING: CL_ParseGamestate: EOF byte (%d) at offset %d of %d (demo file offset %d + bit %d)\n", cmd, msg->readcount - 1, msg->cursize, demoFileOffset + msg->readcount - 1, msg->bit );
 			break;
-		
+		}
+
 		if ( cmd == svc_configstring ) {
 			int		len;
 
@@ -513,6 +518,7 @@ void CL_ParseGamestate( msg_t *msg ) {
 			cl.gameState.stringOffsets[ i ] = cl.gameState.dataCount;
 			Com_Memcpy( cl.gameState.stringData + cl.gameState.dataCount, s, len + 1 );
 			cl.gameState.dataCount += len + 1;
+			Com_Printf( "DEBUG: config string %d: %s\n", i, cl.gameState.stringData + cl.gameState.stringOffsets[ i ] );
 		} else if ( cmd == svc_baseline ) {
 			newnum = MSG_ReadBits( msg, GENTITYNUM_BITS );
 			if ( newnum < 0 || newnum >= MAX_GENTITIES ) {
@@ -520,9 +526,13 @@ void CL_ParseGamestate( msg_t *msg ) {
 			}
 			Com_Memset (&nullstate, 0, sizeof(nullstate));
 			es = &cl.entityBaselines[ newnum ];
+			Com_Printf( "DEBUG: entity baseline for %d\n", newnum );
 			MSG_ReadDeltaEntity( msg, &nullstate, es, newnum );
+			// ### ZTM: FIXME: The above fails? read too much or too little?
 		} else {
-			Com_Error( ERR_DROP, "CL_ParseGamestate: bad command byte" );
+			//Com_Error( ERR_DROP, "CL_ParseGamestate: bad command byte at offset %d", msg->readcount - 1 );
+			Com_Printf( "WARNING: CL_ParseGamestate: bad command byte (%d) at offset %d of %d (demo file offset %d + bit %d)\n",
+				cmd, msg->readcount - 1, msg->cursize, demoFileOffset + msg->readcount - 1, msg->bit );
 		}
 	}
 
@@ -879,7 +889,7 @@ void CL_ParseCommandString( msg_t *msg ) {
 CL_ParseServerMessage
 =====================
 */
-void CL_ParseServerMessage( msg_t *msg ) {
+void CL_ParseServerMessage( msg_t *msg, int demoFileOffset ) {
 	int			cmd;
 
 	if ( cl_shownet->integer == 1 ) {
@@ -909,7 +919,8 @@ void CL_ParseServerMessage( msg_t *msg ) {
 	//
 	while ( 1 ) {
 		if ( msg->readcount > msg->cursize ) {
-			Com_Error (ERR_DROP,"CL_ParseServerMessage: read past end of server message");
+			//Com_Error (ERR_DROP,"CL_ParseServerMessage: read past end of server message");
+			Com_Printf( "WARNING: CL_ParseServerMessage: read past end of server message\n");
 			break;
 		}
 
@@ -936,7 +947,8 @@ void CL_ParseServerMessage( msg_t *msg ) {
 	// other commands
 		switch ( cmd ) {
 		default:
-			Com_Error (ERR_DROP,"CL_ParseServerMessage: Illegible server message");
+			//Com_Error (ERR_DROP,"CL_ParseServerMessage: Illegible server message at demo offset %d", demoFileOffset >= 0 ? demoFileOffset + msg->readcount - 1 : 0);
+			Com_Printf( "DEBUG: CL_ParseServerMessage: Illegible server message at demo offset %d + bit %d\n", demoFileOffset >= 0 ? demoFileOffset + msg->readcount - 1 : 0, msg->bit);
 			break;			
 		case svc_nop:
 			break;
@@ -944,7 +956,7 @@ void CL_ParseServerMessage( msg_t *msg ) {
 			CL_ParseCommandString( msg );
 			break;
 		case svc_gamestate:
-			CL_ParseGamestate( msg );
+			CL_ParseGamestate( msg, demoFileOffset );
 			break;
 		case svc_snapshot:
 			CL_ParseSnapshot( msg );
