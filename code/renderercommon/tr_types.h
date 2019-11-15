@@ -137,8 +137,10 @@ typedef struct {
 	// 1 bits will prevent the associated area from rendering at all
 	byte		areamask[MAX_MAP_AREA_BYTES];
 
+#ifndef ELITEFORCE
 	// text messages for deform text shaders
 	char		text[MAX_RENDER_STRINGS][MAX_RENDER_STRING_LENGTH];
+#endif
 } refdef_t;
 
 
@@ -186,7 +188,12 @@ typedef struct {
 	char					renderer_string[MAX_STRING_CHARS];
 	char					vendor_string[MAX_STRING_CHARS];
 	char					version_string[MAX_STRING_CHARS];
+#ifdef ELITEFORCE
+	// ZTM: this is 2*MAX_STRING_CHARS in EliteForce
+	char					extensions_string[MAX_STRING_CHARS];
+#else
 	char					extensions_string[BIG_INFO_STRING];
+#endif
 
 	int						maxTextureSize;			// queried from GL
 	int						numTextureUnits;		// multitexture ability

@@ -1691,6 +1691,9 @@ extern cvar_t	*r_lodscale;
 
 extern cvar_t	*r_inGameVideo;				// controls whether in game video should be draw
 extern cvar_t	*r_fastsky;				// controls whether sky should be cleared or drawn
+#ifdef ELITEFORCE
+extern cvar_t	*r_origfastsky;				// controls whether fastsky color is like in original EF.
+#endif
 extern cvar_t	*r_drawSun;				// controls drawing of sun quad
 extern cvar_t	*r_dynamiclight;		// dynamic lights enabled/disabled
 extern cvar_t	*r_dlightBacks;			// dlight non-facing surfaces for continuity

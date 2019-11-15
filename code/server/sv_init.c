@@ -664,7 +664,11 @@ void SV_Init (void)
 	// server vars
 	sv_rconPassword = Cvar_Get ("rconPassword", "", CVAR_TEMP );
 	sv_privatePassword = Cvar_Get ("sv_privatePassword", "", CVAR_TEMP );
+	#ifdef ELITEFORCE
+	sv_fps = Cvar_Get ("sv_fps", "20", CVAR_SYSTEMINFO | CVAR_TEMP);
+	#else
 	sv_fps = Cvar_Get ("sv_fps", "20", CVAR_TEMP );
+	#endif
 	sv_timeout = Cvar_Get ("sv_timeout", "200", CVAR_TEMP );
 	sv_zombietime = Cvar_Get ("sv_zombietime", "2", CVAR_TEMP );
 	Cvar_Get ("nextmap", "", CVAR_TEMP );
@@ -720,7 +724,13 @@ void SV_FinalMessage( char *message ) {
 				// don't send a disconnect to a local client
 				if ( cl->netchan.remoteAddress.type != NA_LOOPBACK ) {
 					SV_SendServerCommand( cl, "print \"%s\n\"\n", message );
-					SV_SendServerCommand( cl, "disconnect \"%s\"", message );
+
+					#ifdef ELITEFORCE
+					if(cl->compat)
+						SV_SendServerCommand(cl, "disconnect Server shutdown: %s", message);
+					else
+					#endif
+						SV_SendServerCommand( cl, "disconnect \"%s\"", message );
 				}
 				// force a snapshot to be sent
 				cl->lastSnapshotTime = 0;

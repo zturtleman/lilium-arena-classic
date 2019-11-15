@@ -448,17 +448,21 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 	case CG_FS_FCLOSEFILE:
 		FS_FCloseFile( args[1] );
 		return 0;
+#ifndef ELITEFORCE
 	case CG_FS_SEEK:
 		return FS_Seek( args[1], args[2], args[3] );
+#endif
 	case CG_SENDCONSOLECOMMAND:
 		Cbuf_AddText( VMA(1) );
 		return 0;
 	case CG_ADDCOMMAND:
 		CL_AddCgameCommand( VMA(1) );
 		return 0;
+#ifndef ELITEFORCE
 	case CG_REMOVECOMMAND:
 		Cmd_RemoveCommandSafe( VMA(1) );
 		return 0;
+#endif
 	case CG_SENDCLIENTCOMMAND:
 		CL_AddReliableCommand(VMA(1), qfalse);
 		return 0;
@@ -479,8 +483,10 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 		return CM_InlineModel( args[1] );
 	case CG_CM_TEMPBOXMODEL:
 		return CM_TempBoxModel( VMA(1), VMA(2), /*int capsule*/ qfalse );
+#ifndef ELITEFORCE
 	case CG_CM_TEMPCAPSULEMODEL:
 		return CM_TempBoxModel( VMA(1), VMA(2), /*int capsule*/ qtrue );
+#endif
 	case CG_CM_POINTCONTENTS:
 		return CM_PointContents( VMA(1), args[2] );
 	case CG_CM_TRANSFORMEDPOINTCONTENTS:
@@ -488,15 +494,19 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 	case CG_CM_BOXTRACE:
 		CM_BoxTrace( VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qfalse );
 		return 0;
+#ifndef ELITEFORCE
 	case CG_CM_CAPSULETRACE:
 		CM_BoxTrace( VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qtrue );
 		return 0;
+#endif
 	case CG_CM_TRANSFORMEDBOXTRACE:
 		CM_TransformedBoxTrace( VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], VMA(8), VMA(9), /*int capsule*/ qfalse );
 		return 0;
+#ifndef ELITEFORCE
 	case CG_CM_TRANSFORMEDCAPSULETRACE:
 		CM_TransformedBoxTrace( VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], VMA(8), VMA(9), /*int capsule*/ qtrue );
 		return 0;
+#endif
 	case CG_CM_MARKFRAGMENTS:
 		return re.MarkFragments( args[1], VMA(2), VMA(3), args[4], VMA(5), args[6], VMA(7) );
 	case CG_S_STARTSOUND:
@@ -511,12 +521,14 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 	case CG_S_ADDLOOPINGSOUND:
 		S_AddLoopingSound( args[1], VMA(2), VMA(3), args[4] );
 		return 0;
+#ifndef ELITEFORCE
 	case CG_S_ADDREALLOOPINGSOUND:
 		S_AddRealLoopingSound( args[1], VMA(2), VMA(3), args[4] );
 		return 0;
 	case CG_S_STOPLOOPINGSOUND:
 		S_StopLoopingSound( args[1] );
 		return 0;
+#endif
 	case CG_S_UPDATEENTITYPOSITION:
 		S_UpdateEntityPosition( args[1], VMA(2) );
 		return 0;
@@ -526,7 +538,12 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 	case CG_S_REGISTERSOUND:
 		return S_RegisterSound( VMA(1), args[2] );
 	case CG_S_STARTBACKGROUNDTRACK:
-		S_StartBackgroundTrack( VMA(1), VMA(2) );
+#ifdef ELITEFORCE
+		if ( !VMA(1) || !*((char *) VMA(1)) )
+			S_StopBackgroundTrack();
+		else
+#endif
+			S_StartBackgroundTrack( VMA(1), VMA(2) );
 		return 0;
 	case CG_R_LOADWORLDMAP:
 		re.LoadWorld( VMA(1) );
@@ -539,9 +556,11 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 		return re.RegisterShader( VMA(1) );
 	case CG_R_REGISTERSHADERNOMIP:
 		return re.RegisterShaderNoMip( VMA(1) );
+#ifndef ELITEFORCE
 	case CG_R_REGISTERFONT:
 		re.RegisterFont( VMA(1), args[2], VMA(3));
 		return 0;
+#endif
 	case CG_R_CLEARSCENE:
 		re.ClearScene();
 		return 0;
@@ -551,17 +570,21 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 	case CG_R_ADDPOLYTOSCENE:
 		re.AddPolyToScene( args[1], args[2], VMA(3), 1 );
 		return 0;
+#ifndef ELITEFORCE
 	case CG_R_ADDPOLYSTOSCENE:
 		re.AddPolyToScene( args[1], args[2], VMA(3), args[4] );
 		return 0;
 	case CG_R_LIGHTFORPOINT:
 		return re.LightForPoint( VMA(1), VMA(2), VMA(3), VMA(4) );
+#endif
 	case CG_R_ADDLIGHTTOSCENE:
 		re.AddLightToScene( VMA(1), VMF(2), VMF(3), VMF(4), VMF(5) );
 		return 0;
+#ifndef ELITEFORCE
 	case CG_R_ADDADDITIVELIGHTTOSCENE:
 		re.AddAdditiveLightToScene( VMA(1), VMF(2), VMF(3), VMF(4), VMF(5) );
 		return 0;
+#endif
 	case CG_R_RENDERSCENE:
 		re.RenderScene( VMA(1) );
 		return 0;
@@ -598,6 +621,7 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 		return 0;
 	case CG_MEMORY_REMAINING:
 		return Hunk_MemoryRemaining();
+#ifndef ELITEFORCE
   case CG_KEY_ISDOWN:
 		return Key_IsDown( args[1] );
   case CG_KEY_GETCATCHER:
@@ -608,6 +632,7 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
     return 0;
   case CG_KEY_GETKEY:
 		return Key_GetKey( VMA(1) );
+#endif
 
 
 
@@ -632,6 +657,7 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 		return FloatAsInt( floor( VMF(1) ) );
 	case CG_CEIL:
 		return FloatAsInt( ceil( VMF(1) ) );
+#ifndef ELITEFORCE
 	case CG_ACOS:
 		return FloatAsInt( Q_acos( VMF(1) ) );
 
@@ -692,6 +718,7 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 		return re.GetEntityToken( VMA(1), args[2] );
 	case CG_R_INPVS:
 		return re.inPVS( VMA(1), VMA(2) );
+#endif
 
 	default:
 	        assert(0);

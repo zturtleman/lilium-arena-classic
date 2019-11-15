@@ -53,9 +53,10 @@ playerState_t *SV_GameClientNum( int num ) {
 	return ps;
 }
 
-svEntity_t	*SV_SvEntityForGentity( sharedEntity_t *gEnt ) {
+svEntity_t	*SV_SvEntityForGentityDEBUG( sharedEntity_t *gEnt, const char *file, int line ) {
 	if ( !gEnt || gEnt->s.number < 0 || gEnt->s.number >= MAX_GENTITIES ) {
-		Com_Error( ERR_DROP, "SV_SvEntityForGentity: bad gEnt" );
+		assert( 0 );
+		Com_Error( ERR_DROP, "SV_SvEntityForGentity: bad gEnt at %s:%d", file, line );
 	}
 	return &sv.svEntities[ gEnt->s.number ];
 }
@@ -335,8 +336,10 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		return 0;
 	case G_FS_GETFILELIST:
 		return FS_GetFileList( VMA(1), VMA(2), VMA(3), args[4] );
+#ifndef ELITEFORCE
 	case G_FS_SEEK:
 		return FS_Seek( args[1], args[2], args[3] );
+#endif
 
 	case G_LOCATE_GAME_DATA:
 		SV_LocateGameData( VMA(1), args[2], args[3], VMA(4), args[5] );
@@ -357,14 +360,18 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		return SV_AreaEntities( VMA(1), VMA(2), VMA(3), args[4] );
 	case G_ENTITY_CONTACT:
 		return SV_EntityContact( VMA(1), VMA(2), VMA(3), /*int capsule*/ qfalse );
+#ifndef ELITEFORCE
 	case G_ENTITY_CONTACTCAPSULE:
 		return SV_EntityContact( VMA(1), VMA(2), VMA(3), /*int capsule*/ qtrue );
+#endif
 	case G_TRACE:
 		SV_Trace( VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qfalse );
 		return 0;
+#ifndef ELITEFORCE
 	case G_TRACECAPSULE:
 		SV_Trace( VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qtrue );
 		return 0;
+#endif
 	case G_POINT_CONTENTS:
 		return SV_PointContents( VMA(1), args[2] );
 	case G_SET_BRUSH_MODEL:
@@ -423,11 +430,13 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 	case G_DEBUG_POLYGON_DELETE:
 		BotImport_DebugPolygonDelete( args[1] );
 		return 0;
+#ifndef ELITEFORCE
 	case G_REAL_TIME:
 		return Com_RealTime( VMA(1) );
 	case G_SNAPVECTOR:
 		Q_SnapVector(VMA(1));
 		return 0;
+#endif
 
 		//====================================
 
@@ -440,6 +449,10 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 	case BOTLIB_LIBVAR_GET:
 		return botlib_export->BotLibVarGet( VMA(1), VMA(2), args[3] );
 
+#ifdef ELITEFORCE
+	case BOTLIB_DEFINE:
+		return botlib_export->PC_AddGlobalDefine( VMA(1) );
+#else
 	case BOTLIB_PC_ADD_GLOBAL_DEFINE:
 		return botlib_export->PC_AddGlobalDefine( VMA(1) );
 	case BOTLIB_PC_LOAD_SOURCE:
@@ -450,6 +463,7 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		return botlib_export->PC_ReadTokenHandle( args[1], VMA(2) );
 	case BOTLIB_PC_SOURCE_FILE_AND_LINE:
 		return botlib_export->PC_SourceFileAndLine( args[1], VMA(2), VMA(3) );
+#endif
 
 	case BOTLIB_START_FRAME:
 		return botlib_export->BotLibStartFrame( VMF(1) );
@@ -474,12 +488,14 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		}
 		return 0;
 
+#ifndef ELITEFORCE
 	case BOTLIB_AAS_BBOX_AREAS:
 		return botlib_export->aas.AAS_BBoxAreas( VMA(1), VMA(2), VMA(3), args[4] );
 	case BOTLIB_AAS_AREA_INFO:
 		return botlib_export->aas.AAS_AreaInfo( args[1], VMA(2) );
 	case BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL:
 		return botlib_export->aas.AAS_AlternativeRouteGoals( VMA(1), args[2], VMA(3), args[4], args[5], VMA(6), args[7], args[8] );
+#endif
 	case BOTLIB_AAS_ENTITY_INFO:
 		botlib_export->aas.AAS_EntityInfo( args[1], VMA(2) );
 		return 0;
@@ -494,8 +510,10 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 
 	case BOTLIB_AAS_POINT_AREA_NUM:
 		return botlib_export->aas.AAS_PointAreaNum( VMA(1) );
+#ifndef ELITEFORCE
 	case BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX:
 		return botlib_export->aas.AAS_PointReachabilityAreaIndex( VMA(1) );
+#endif
 	case BOTLIB_AAS_TRACE_AREAS:
 		return botlib_export->aas.AAS_TraceAreas( VMA(1), VMA(2), VMA(3), VMA(4), args[5] );
 
@@ -517,10 +535,12 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 
 	case BOTLIB_AAS_AREA_TRAVEL_TIME_TO_GOAL_AREA:
 		return botlib_export->aas.AAS_AreaTravelTimeToGoalArea( args[1], VMA(2), args[3], args[4] );
+#ifndef ELITEFORCE
 	case BOTLIB_AAS_ENABLE_ROUTING_AREA:
 		return botlib_export->aas.AAS_EnableRoutingArea( args[1], args[2] );
 	case BOTLIB_AAS_PREDICT_ROUTE:
 		return botlib_export->aas.AAS_PredictRoute( VMA(1), args[2], VMA(3), args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11] );
+#endif
 
 	case BOTLIB_AAS_SWIMMING:
 		return botlib_export->aas.AAS_Swimming( VMA(1) );
@@ -538,9 +558,11 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		botlib_export->ea.EA_Command( args[1], VMA(2) );
 		return 0;
 
+#ifndef ELITEFORCE
 	case BOTLIB_EA_ACTION:
 		botlib_export->ea.EA_Action( args[1], args[2] );
 		return 0;
+#endif
 	case BOTLIB_EA_GESTURE:
 		botlib_export->ea.EA_Gesture( args[1] );
 		return 0;
@@ -670,7 +692,11 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		botlib_export->ai.BotSetChatGender( args[1], args[2] );
 		return 0;
 	case BOTLIB_AI_SET_CHAT_NAME:
+#ifdef ELITEFORCE
+		botlib_export->ai.BotSetChatName( args[1], VMA(2));
+#else
 		botlib_export->ai.BotSetChatName( args[1], VMA(2), args[3] );
+#endif
 		return 0;
 
 	case BOTLIB_AI_RESET_GOAL_STATE:
@@ -720,9 +746,11 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		return botlib_export->ai.BotGetMapLocationGoal( VMA(1), VMA(2) );
 	case BOTLIB_AI_AVOID_GOAL_TIME:
 		return FloatAsInt( botlib_export->ai.BotAvoidGoalTime( args[1], args[2] ) );
+#ifndef ELITEFORCE
 	case BOTLIB_AI_SET_AVOID_GOAL_TIME:
 		botlib_export->ai.BotSetAvoidGoalTime( args[1], args[2], VMF(3));
 		return 0;
+#endif
 	case BOTLIB_AI_INIT_LEVEL_ITEMS:
 		botlib_export->ai.BotInitLevelItems();
 		return 0;
@@ -752,9 +780,11 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 	case BOTLIB_AI_RESET_MOVE_STATE:
 		botlib_export->ai.BotResetMoveState( args[1] );
 		return 0;
+#ifndef ELITEFORCE
 	case BOTLIB_AI_ADD_AVOID_SPOT:
 		botlib_export->ai.BotAddAvoidSpot( args[1], VMA(2), VMF(3), args[4] );
 		return 0;
+#endif
 	case BOTLIB_AI_MOVE_TO_GOAL:
 		botlib_export->ai.BotMoveToGoal( VMA(1), args[2], VMA(3), args[4] );
 		return 0;

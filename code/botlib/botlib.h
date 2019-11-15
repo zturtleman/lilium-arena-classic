@@ -331,7 +331,11 @@ typedef struct ai_export_s
 	void	(*BotReplaceSynonyms)(char *string, unsigned long int context);
 	int		(*BotLoadChatFile)(int chatstate, char *chatfile, char *chatname);
 	void	(*BotSetChatGender)(int chatstate, int gender);
+#ifdef ELITEFORCE
+	void	(*BotSetChatName)(int chatstate, char *name);
+#else
 	void	(*BotSetChatName)(int chatstate, char *name, int client);
+#endif
 	//-----------------------------------
 	// be_ai_goal.h
 	//-----------------------------------

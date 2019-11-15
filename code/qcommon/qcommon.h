@@ -43,6 +43,9 @@ typedef struct {
 	qboolean	allowoverflow;	// if false, do a Com_Error
 	qboolean	overflowed;		// set to true if the buffer size failed (with allowoverflow set)
 	qboolean	oob;			// set to true if the buffer size failed (with allowoverflow set)
+#ifdef ELITEFORCE
+	qboolean	compat;		// Compatibility mode for old EliteForce servers.
+#endif
 	byte	*data;
 	int		maxsize;
 	int		cursize;
@@ -94,6 +97,9 @@ char	*MSG_ReadStringLine (msg_t *sb);
 float	MSG_ReadAngle16 (msg_t *sb);
 void	MSG_ReadData (msg_t *sb, void *buffer, int size);
 int		MSG_LookaheadByte (msg_t *msg);
+
+void MSG_WriteDeltaUsercmd( msg_t *msg, struct usercmd_s *from, struct usercmd_s *to );
+void MSG_ReadDeltaUsercmd( msg_t *msg, struct usercmd_s *from, struct usercmd_s *to );
 
 void MSG_WriteDeltaUsercmdKey( msg_t *msg, int key, usercmd_t *from, usercmd_t *to );
 void MSG_ReadDeltaUsercmdKey( msg_t *msg, int key, usercmd_t *from, usercmd_t *to );
@@ -251,8 +257,14 @@ PROTOCOL
 ==============================================================
 */
 
-#define	PROTOCOL_VERSION	71
-#define PROTOCOL_LEGACY_VERSION	68
+#ifdef ELITEFORCE
+  #define PROTOCOL_VERSION		71
+  #define PROTOCOL_LEGACY_VERSION	43
+#else
+  #define PROTOCOL_VERSION		71
+  #define PROTOCOL_LEGACY_VERSION	68
+#endif
+// 1.16n - 43
 // 1.31 - 67
 
 // maintain a list of compatible protocols for demo playing
@@ -595,7 +607,9 @@ issues.
 #define FS_CGAME_REF	0x04
 // number of id paks that will never be autodownloaded from baseq3/missionpack
 #define NUM_ID_PAKS		9
+#ifndef ELITEFORCE
 #define NUM_TA_PAKS		4
+#endif
 
 #define	MAX_FILE_HANDLES	64
 

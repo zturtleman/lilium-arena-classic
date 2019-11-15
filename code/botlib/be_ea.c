@@ -204,7 +204,11 @@ void EA_Respawn(int client)
 
 	bi = &botinputs[client];
 
+#ifdef ELITEFORCE
+	bi->actionflags |= ACTION_ATTACK;
+#else
 	bi->actionflags |= ACTION_RESPAWN;
+#endif
 } //end of the function EA_Respawn
 //===========================================================================
 //

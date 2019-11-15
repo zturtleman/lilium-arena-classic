@@ -3131,8 +3131,10 @@ qboolean FS_ComparePaks( char *neededpaks, int len, qboolean dlstring ) {
 
 		// never autodownload any of the id paks
 		if(FS_idPak(fs_serverReferencedPakNames[i], BASEGAME, NUM_ID_PAKS)
+#ifndef ELITEFORCE
 #ifndef STANDALONE
 				|| FS_idPak(fs_serverReferencedPakNames[i], BASETA, NUM_TA_PAKS)
+#endif
 #endif
 			)
 		{
@@ -3459,6 +3461,9 @@ STANDALONE in q_shared.h
 */
 static void FS_CheckPak0( void )
 {
+	// ### ZTM: FIXME: change pak[0-8].pk3 check
+	return;
+
 	searchpath_t	*path;
 	pack_t		*curpack;
 	const char	*pakBasename;
@@ -3509,6 +3514,7 @@ static void FS_CheckPak0( void )
 
 			foundPak |= 1<<(pakBasename[3]-'0');
 		}
+#if 0
 		else if(!Q_stricmpn(curpack->pakGamename, BASETA, MAX_OSPATH)
 				&& strlen(pakBasename) == 4 && !Q_stricmpn(pakBasename, "pak", 3)
 				&& pakBasename[3] >= '0' && pakBasename[3] <= '0' + NUM_TA_PAKS - 1)
@@ -3526,6 +3532,7 @@ static void FS_CheckPak0( void )
 
 			foundTA |= 1 << (pakBasename[3]-'0');
 		}
+#endif
 		else
 		{
 			int index;

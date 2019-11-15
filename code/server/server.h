@@ -400,6 +400,9 @@ void SV_WriteFrameToClient (client_t *client, msg_t *msg);
 void SV_SendMessageToClient( msg_t *msg, client_t *client );
 void SV_SendClientMessages( void );
 void SV_SendClientSnapshot( client_t *client );
+#ifdef ELITEFORCE
+void SV_WriteDummySnapshotToClient( client_t *client, msg_t *msg );
+#endif
 
 //
 // sv_game.c
@@ -407,7 +410,8 @@ void SV_SendClientSnapshot( client_t *client );
 int	SV_NumForGentity( sharedEntity_t *ent );
 sharedEntity_t *SV_GentityNum( int num );
 playerState_t *SV_GameClientNum( int num );
-svEntity_t	*SV_SvEntityForGentity( sharedEntity_t *gEnt );
+#define SV_SvEntityForGentity( x ) SV_SvEntityForGentityDEBUG( x, __FILE__, __LINE__ )
+svEntity_t	*SV_SvEntityForGentityDEBUG( sharedEntity_t *gEnt, const char *file, int line );
 sharedEntity_t *SV_GEntityForSvEntity( svEntity_t *svEnt );
 void		SV_InitGameProgs ( void );
 void		SV_ShutdownGameProgs ( void );

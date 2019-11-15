@@ -68,7 +68,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define BASETA				"missionpack"
 
 #ifndef PRODUCT_VERSION
-  #define PRODUCT_VERSION "1.36"
+  #ifdef ELITEFORCE
+    #define PRODUCT_VERSION "1.40"
+  #else
+    #define PRODUCT_VERSION "1.36"
+  #endif
 #endif
 
 #ifndef PRODUCT_DATE
@@ -1133,7 +1137,11 @@ typedef struct {
 #define	MAX_POWERUPS			16
 #define	MAX_WEAPONS				16		
 
+#if 0 //#ifdef ELITEFORCE
+#define MAX_PS_EVENTS			4
+#else
 #define	MAX_PS_EVENTS			2
+#endif
 
 #define PS_PMOVEFRAMECOUNTBITS	6
 
@@ -1175,7 +1183,9 @@ typedef struct playerState_s {
 								// when at rest, the value will remain unchanged
 								// used to twist the legs during strafing
 
+//#ifndef ELITEFORCE
 	vec3_t		grapplePoint;	// location of grapple to pull towards if PMF_GRAPPLE_PULL
+//#endif
 
 	int			eFlags;			// copied to entityState_t->eFlags
 
@@ -1205,15 +1215,19 @@ typedef struct playerState_s {
 	int			powerups[MAX_POWERUPS];	// level.time that the powerup runs out
 	int			ammo[MAX_WEAPONS];
 
+#ifndef ELITEFORCE
 	int			generic1;
 	int			loopSound;
 	int			jumppad_ent;	// jumppad entity hit this frame
+#endif
 
 	// not communicated over the net at all
 	int			ping;			// server to game info for scoreboard
+#ifndef ELITEFORCE
 	int			pmove_framecount;
 	int			jumppad_frame;
 	int			entityEventSequence;
+#endif
 } playerState_t;
 
 
@@ -1247,6 +1261,15 @@ typedef struct playerState_s {
 										// then BUTTON_WALKING should be set
 
 // usercmd_t is sent to the server each client frame
+#ifdef ELITEFORCE
+typedef struct usercmd_s {
+	int			serverTime;
+	byte		buttons;
+	byte		weapon;
+	int			angles[3];
+	signed char	forwardmove, rightmove, upmove;
+} usercmd_t;
+#else
 typedef struct usercmd_s {
 	int				serverTime;
 	int				angles[3];
@@ -1254,6 +1277,7 @@ typedef struct usercmd_s {
 	byte			weapon;           // weapon 
 	signed char	forwardmove, rightmove, upmove;
 } usercmd_t;
+#endif
 
 //===================================================================
 
@@ -1325,7 +1349,9 @@ typedef struct entityState_s {
 	int		legsAnim;		// mask off ANIM_TOGGLEBIT
 	int		torsoAnim;		// mask off ANIM_TOGGLEBIT
 
+#ifndef ELITEFORCE
 	int		generic1;
+#endif
 } entityState_t;
 
 typedef enum {
