@@ -399,6 +399,7 @@ static void SV_AddEntitiesVisibleFromPoint( vec3_t origin, clientSnapshot_t *fra
 			continue;
 		}
 
+#if 0
 		// entities can be flagged to be sent to only one client
 		if ( ent->r.svFlags & SVF_SINGLECLIENT ) {
 			if ( ent->r.singleClient != frame->ps.clientNum ) {
@@ -418,6 +419,7 @@ static void SV_AddEntitiesVisibleFromPoint( vec3_t origin, clientSnapshot_t *fra
 			if (~ent->r.singleClient & (1 << frame->ps.clientNum))
 				continue;
 		}
+#endif
 
 		svEnt = SV_SvEntityForGentity( ent );
 
