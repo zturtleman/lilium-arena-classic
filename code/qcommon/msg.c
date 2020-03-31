@@ -1049,11 +1049,7 @@ typedef struct {
 netField_t      entityStateFields[] =
 {
 { NETF(eType), 8 },
-#if 0 // ZTM: TODO: try value from Q3 1.32
-{ NETF(eFlags), 19 },
-#else
-{ NETF(eFlags), 24 },
-#endif
+{ NETF(eFlags), 16 },
 { NETF(pos.trType), 8 },
 { NETF(pos.trTime), 32 },
 { NETF(pos.trDuration), 32 },
@@ -1089,11 +1085,7 @@ netField_t      entityStateFields[] =
 { NETF(otherEntityNum), GENTITYNUM_BITS },
 { NETF(otherEntityNum2), GENTITYNUM_BITS },
 { NETF(groundEntityNum), GENTITYNUM_BITS },
-#if 1 // value from Q3 1.32 -- seems correct
 { NETF(loopSound), 8 },
-#else
-{ NETF(loopSound), 16 },
-#endif
 { NETF(constantLight), 32 },
 { NETF(modelindex), 8 },
 { NETF(modelindex2), 8 },
@@ -1450,8 +1442,12 @@ void MSG_ReadDeltaEntity( msg_t *msg, entityState_t *from, entityState_t *to,
 		// Read in the vector index and check whether there is a predefined one or not.
 		vectorIndex = MSG_ReadBits( msg, PVECTOR_BITS );
 
-		if ( print ) { // ### ZTM: TODO: Remove this after loading demo works.
-			Com_Printf( "vectorIndex:%d ", vectorIndex );
+		if ( print ) {
+			if (vectorIndex == PVECTOR_NUM) {
+				Com_Printf( "<uc> " );
+			} else {
+				Com_Printf( "<%2d> ", vectorIndex );
+			}
 		}
 
 		if (vectorIndex == PVECTOR_NUM)
@@ -1561,7 +1557,6 @@ plyer_state_t communication
 // using the stringizing operator to save typing...
 #define	PSF(x) #x,(size_t)&((playerState_t*)0)->x
 
-// ###: ZTM: FIXME: parsing playerstate doesn't work correctly for q3 1.16n (demo001.dm3)
 #ifdef ELITEFORCE
 netField_t      playerStateFields[] =
 {
@@ -1584,28 +1579,17 @@ netField_t      playerStateFields[] =
 { PSF(delta_angles[2]), 16 },
 { PSF(groundEntityNum), GENTITYNUM_BITS },
 { PSF(legsTimer), 8 },
-#if 0 // ZTM: FIXME: not sure if order should match struct
-{ PSF(legsAnim), 8 },
-{ PSF(torsoTimer), 12 },
-{ PSF(torsoAnim), 8 },
-#else // order in ioEF
 { PSF(torsoTimer), 12 },
 { PSF(legsAnim), 8 },
 { PSF(torsoAnim), 8 },
-#endif
 { PSF(movementDir), 4 },
-#if 0
-{ PSF(grapplePoint[0]), 0 },
-{ PSF(grapplePoint[1]), 0 },
-{ PSF(grapplePoint[2]), 0 },
-#endif
 { PSF(eFlags), 16 },
 { PSF(eventSequence), 16 },
 { PSF(events[0]), 8 },
 { PSF(events[1]), 8 },
 { PSF(eventParms[0]), 8 },
 { PSF(eventParms[1]), 8 },
-{ PSF(externalEvent), 10 },
+{ PSF(externalEvent), 8 },
 { PSF(externalEventParm), 8 },
 { PSF(clientNum), 8 },
 { PSF(weapon), 5 },
@@ -1618,11 +1602,9 @@ netField_t      playerStateFields[] =
 { PSF(damageYaw), 8 },
 { PSF(damagePitch), 8 },
 { PSF(damageCount), 8 },
-#if 1 // ZTM: based on string order in quake3.exe (1.16n) it seems to be last(?).
 { PSF(grapplePoint[0]), 0 },
 { PSF(grapplePoint[1]), 0 },
 { PSF(grapplePoint[2]), 0 },
-#endif
 };
 #else
 netField_t	playerStateFields[] = 
