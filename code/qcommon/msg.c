@@ -1541,7 +1541,7 @@ void MSG_ReadDeltaEntity( msg_t *msg, entityState_t *from, entityState_t *to,
 		} else {
 			endBit = ( msg->readcount - 1 ) * 8 + msg->bit - GENTITYNUM_BITS;
 		}
-		Com_Printf( " (%i bits, msg bits %i)\n", endBit - startBit, msg->bit ); // ZTM: Added bits
+		Com_Printf( " (%i bits)\n", endBit - startBit );
 	}
 }
 
@@ -1925,20 +1925,20 @@ void MSG_ReadDeltaPlayerstate (msg_t *msg, playerState_t *from, playerState_t *t
 					trunc -= FLOAT_INT_BIAS;
 					*(float *)toF = trunc; 
 					if ( print ) {
-						Com_Printf( "[%d]%s:%i ", i, field->name, trunc );
+						Com_Printf( "%s:%i ", field->name, trunc );
 					}
 				} else {
 					// full floating point value
 					*toF = MSG_ReadBits( msg, 32 );
 					if ( print ) {
-						Com_Printf( "[%d]%s:%f ", i, field->name, *(float *)toF );
+						Com_Printf( "%s:%f ", field->name, *(float *)toF );
 					}
 				}
 			} else {
 				// integer
 				*toF = MSG_ReadBits( msg, field->bits );
 				if ( print ) {
-					Com_Printf( "[%d]%s:%i ", i, field->name, *toF );
+					Com_Printf( "%s:%i ", field->name, *toF );
 				}
 			}
 		}
