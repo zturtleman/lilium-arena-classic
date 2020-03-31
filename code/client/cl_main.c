@@ -697,6 +697,8 @@ void CL_Record_f( void ) {
 	entityState_t	*ent;
 	entityState_t	nullstate;
 	char		*s;
+	int			currentProtocol;
+	char		demoExt[16];
 
 	if ( Cmd_Argc() > 2 ) {
 		Com_Printf ("record <demoname>\n");
@@ -720,27 +722,29 @@ void CL_Record_f( void ) {
 		Com_Printf (S_COLOR_YELLOW "WARNING: You should set 'g_synchronousClients 1' for smoother demo recording\n");
 	}
 
+#ifdef LEGACY_PROTOCOL
+	currentProtocol = (clc.compat) ? com_legacyprotocol->integer : com_protocol->integer;
+#else
+	currentProtocol = com_protocol->integer;
+#endif
+
+	if ( currentProtocol == 43 ) {
+		Com_sprintf(demoExt, sizeof(name), "dm3");
+	} else {
+		Com_sprintf(demoExt, sizeof(name), "%s%d", DEMOEXT, currentProtocol);
+	}
+
 	if ( Cmd_Argc() == 2 ) {
 		s = Cmd_Argv(1);
 		Q_strncpyz( demoName, s, sizeof( demoName ) );
-#ifdef LEGACY_PROTOCOL
-		if(clc.compat)
-			Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, com_legacyprotocol->integer);
-		else
-#endif
-			Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, com_protocol->integer);
+		Com_sprintf(name, sizeof(name), "demos/%s.%s", demoName, demoExt);
 	} else {
 		int		number;
 
 		// scan for a free demo name
 		for ( number = 0 ; number <= 9999 ; number++ ) {
 			CL_DemoFilename( number, demoName, sizeof( demoName ) );
-#ifdef LEGACY_PROTOCOL
-			if(clc.compat)
-				Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, com_legacyprotocol->integer);
-			else
-#endif
-				Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, com_protocol->integer);
+			Com_sprintf(name, sizeof(name), "demos/%s.%s", demoName, demoExt);
 
 			if (!FS_FileExists(name))
 				break;	// file doesn't exist
@@ -1024,6 +1028,17 @@ static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
 	int i = 0;
 	*demofile = 0;
 
+#if 1
+	Com_sprintf(name, MAX_OSPATH, "demos/%s.dm3", arg);
+	FS_FOpenFileRead(name, demofile, qtrue);
+
+	if (*demofile)
+	{
+		Com_Printf("Demo file: %s\n", name);
+		return 43;
+	}
+#endif
+
 #ifdef LEGACY_PROTOCOL
 	if(com_legacyprotocol->integer > 0)
 	{
@@ -1088,7 +1103,12 @@ static void CL_CompleteDemoName( char *args, int argNum )
 	{
 		char demoExt[ 16 ];
 
+		// TODO: Support multiple extensions?
+#if 1
+		Com_sprintf(demoExt, sizeof(demoExt), ".dm3");
+#else
 		Com_sprintf(demoExt, sizeof(demoExt), ".%s%d", DEMOEXT, com_protocol->integer);
+#endif
 		Field_CompleteFilename( "demos", demoExt, qtrue, qtrue );
 	}
 }
