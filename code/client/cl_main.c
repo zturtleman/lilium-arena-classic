@@ -3298,6 +3298,11 @@ int CL_ScaledMilliseconds(void) {
 	return Sys_Milliseconds()*com_timescale->value;
 }
 
+int CL_FS_FileIsInPAK( const char *filename, int *pChecksum ) {
+	// compat is always qfalse to match ioquake3 renderer API.
+	return FS_FileIsInPAK( filename, qfalse, pChecksum );
+}
+
 /*
 ============
 CL_InitRef
@@ -3366,7 +3371,7 @@ void CL_InitRef( void ) {
 	ri.FS_WriteFile = FS_WriteFile;
 	ri.FS_FreeFileList = FS_FreeFileList;
 	ri.FS_ListFiles = FS_ListFiles;
-	ri.FS_FileIsInPAK = FS_FileIsInPAK;
+	ri.FS_FileIsInPAK = CL_FS_FileIsInPAK;
 	ri.FS_FileExists = FS_FileExists;
 	ri.Cvar_Get = Cvar_Get;
 	ri.Cvar_Set = Cvar_Set;
