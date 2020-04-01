@@ -678,11 +678,7 @@ void SVC_Info( netadr_t from ) {
 		Info_SetValueForKey( infostring, "game", gamedir );
 	}
 
-#ifdef ELITEFORCE
-	NET_OutOfBandPrint( NS_SERVER, from, "infoResponse \"%s\"", infostring );
-#else
 	NET_OutOfBandPrint( NS_SERVER, from, "infoResponse\n%s", infostring );
-#endif
 }
 
 /*

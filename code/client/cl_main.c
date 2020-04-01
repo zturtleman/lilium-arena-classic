@@ -3942,19 +3942,6 @@ void CL_ServerInfoPacket( netadr_t from, msg_t *msg ) {
 	char	*gamename;
 	qboolean gameMismatch;
 
-#ifdef ELITEFORCE
-	// eliteforce doesn't send a \n after infoResponse..
-	infoString = strchr((char *) msg->data, '"');
-	if(!infoString)
-		return;
-	msg->readcount = (int) ((byte *) ++infoString - msg->data);
-	msg->bit = msg->readcount << 3;
-	// find the second " character and empty it.
-	infoString = strchr(infoString, '"');
-	if(infoString)
-		*infoString = '\0';
-#endif
-
 	infoString = MSG_ReadString( msg );
 
 	// if this isn't the correct gamename, ignore it
