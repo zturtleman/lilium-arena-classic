@@ -2983,6 +2983,18 @@ void FS_AddGameDirectory( const char *path, const char *dir ) {
 		}
 
 		if (pakwhich) {
+			// only load patch paks for Q3 1.16
+			if ( Q_stricmp( dir, "baseq3" ) == 0
+			  && ( Q_stricmp( pakfiles[pakfilesi], "pak3.pk3" ) == 0
+			    || Q_stricmp( pakfiles[pakfilesi], "pak4.pk3" ) == 0
+			    || Q_stricmp( pakfiles[pakfilesi], "pak5.pk3" ) == 0
+			    || Q_stricmp( pakfiles[pakfilesi], "pak6.pk3" ) == 0
+			    || Q_stricmp( pakfiles[pakfilesi], "pak7.pk3" ) == 0
+			    || Q_stricmp( pakfiles[pakfilesi], "pak8.pk3" ) == 0 ) ) {
+				pakfilesi++;
+				continue;
+			}
+
 			// The next .pk3 file is before the next .pk3dir
 			pakfile = FS_BuildOSPath(path, dir, pakfiles[pakfilesi]);
 			if ((pak = FS_LoadZipFile(pakfile, pakfiles[pakfilesi])) == 0) {
