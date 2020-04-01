@@ -668,7 +668,7 @@ long		FS_FOpenFileRead( const char *qpath, fileHandle_t *file, qboolean uniqueFI
 // It is generally safe to always set uniqueFILE to true, because the majority of
 // file IO goes through FS_ReadFile, which Does The Right Thing already.
 
-int		FS_FileIsInPAK(const char *filename, int *pChecksum );
+int		FS_FileIsInPAK(const char *filename, qboolean compat, int *pChecksum );
 // returns 1 if a file is in the PAK file, otherwise -1
 
 int		FS_Write( const void *buffer, int len, fileHandle_t f );
@@ -721,13 +721,13 @@ qboolean FS_FilenameCompare( const char *s1, const char *s2 );
 
 const char *FS_LoadedPakNames( void );
 const char *FS_LoadedPakChecksums( void );
-const char *FS_LoadedPakPureChecksums( void );
+const char *FS_LoadedPakPureChecksums( qboolean compat );
 // Returns a space separated string containing the checksums of all loaded pk3 files.
 // Servers with sv_pure set will get this string and pass it to clients.
 
 const char *FS_ReferencedPakNames( void );
 const char *FS_ReferencedPakChecksums( void );
-const char *FS_ReferencedPakPureChecksums( void );
+const char *FS_ReferencedPakPureChecksums( qboolean compat );
 // Returns a space separated string containing the checksums of all loaded 
 // AND referenced pk3 files. Servers with sv_pure set will get this string 
 // back from clients for pure validation 

@@ -1759,7 +1759,7 @@ CONVENIENCE FUNCTIONS FOR ENTIRE FILES
 ======================================================================================
 */
 
-int	FS_FileIsInPAK(const char *filename, int *pChecksum ) {
+int	FS_FileIsInPAK(const char *filename, qboolean compat, int *pChecksum ) {
 	searchpath_t	*search;
 	pack_t			*pak;
 	fileInPack_t	*pakFile;
@@ -1808,7 +1808,7 @@ int	FS_FileIsInPAK(const char *filename, int *pChecksum ) {
 				// case and separator insensitive comparisons
 				if ( !FS_FilenameCompare( pakFile->name, filename ) ) {
 					if (pChecksum) {
-						*pChecksum = pak->pure_checksum;
+						*pChecksum = ( compat ) ? pak->checksum : pak->pure_checksum;
 					}
 					return 1;
 				}
@@ -3730,7 +3730,7 @@ Servers with sv_pure use these checksums to compare with the checksums the clien
 back to the server.
 =====================
 */
-const char *FS_LoadedPakPureChecksums( void ) {
+const char *FS_LoadedPakPureChecksums( qboolean compat ) {
 	static char	info[BIG_INFO_STRING];
 	searchpath_t	*search;
 
@@ -3742,7 +3742,7 @@ const char *FS_LoadedPakPureChecksums( void ) {
 			continue;
 		}
 
-		Q_strcat( info, sizeof( info ), va("%i ", search->pack->pure_checksum ) );
+		Q_strcat( info, sizeof( info ), va("%i ", ( compat ) ? search->pack->checksum : search->pack->pure_checksum ) );
 	}
 
 	return info;
@@ -3785,7 +3785,7 @@ Servers with sv_pure set will get this string back from clients for pure validat
 The string has a specific order, "cgame ui @ ref1 ref2 ref3 ..."
 =====================
 */
-const char *FS_ReferencedPakPureChecksums( void ) {
+const char *FS_ReferencedPakPureChecksums( qboolean compat ) {
 	static char	info[BIG_INFO_STRING];
 	searchpath_t	*search;
 	int nFlags, numPaks, checksum;
@@ -3806,7 +3806,7 @@ const char *FS_ReferencedPakPureChecksums( void ) {
 		for ( search = fs_searchpaths ; search ; search = search->next ) {
 			// is the element a pak file and has it been referenced based on flag?
 			if ( search->pack && (search->pack->referenced & nFlags)) {
-				Q_strcat( info, sizeof( info ), va("%i ", search->pack->pure_checksum ) );
+				Q_strcat( info, sizeof( info ), va("%i ", ( compat ) ? search->pack->checksum : search->pack->pure_checksum ) );
 				if (nFlags & (FS_CGAME_REF | FS_UI_REF)) {
 					break;
 				}
@@ -3815,9 +3815,11 @@ const char *FS_ReferencedPakPureChecksums( void ) {
 			}
 		}
 	}
-	// last checksum is the encoded number of referenced pk3s
-	checksum ^= numPaks;
-	Q_strcat( info, sizeof( info ), va("%i ", checksum ) );
+	if ( !compat ) {
+		// last checksum is the encoded number of referenced pk3s
+		checksum ^= numPaks;
+		Q_strcat( info, sizeof( info ), va("%i ", checksum ) );
+	}
 
 	return info;
 }

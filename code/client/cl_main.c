@@ -1969,10 +1969,10 @@ void CL_SendPureChecksums( void ) {
 	// if we are pure we need to send back a command with our referenced pk3 checksums
 #ifdef ELITEFORCE
 	if(clc.compat)
-		Com_sprintf(cMsg, sizeof(cMsg), "cp %s", FS_ReferencedPakPureChecksums());
+		Com_sprintf(cMsg, sizeof(cMsg), "cl_paks %s", FS_ReferencedPakPureChecksums(clc.compat));
 	else
 #endif
-		Com_sprintf(cMsg, sizeof(cMsg), "cp %d %s", cl.serverId, FS_ReferencedPakPureChecksums());
+		Com_sprintf(cMsg, sizeof(cMsg), "cp %d %s", cl.serverId, FS_ReferencedPakPureChecksums(qfalse));
 
 	CL_AddReliableCommand(cMsg, qfalse);
 }

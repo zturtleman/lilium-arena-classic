@@ -1307,9 +1307,9 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 
 		nChkSum1 = nChkSum2 = 0;
 		// we run the game, so determine which cgame and ui the client "should" be running
-		bGood = (FS_FileIsInPAK("vm/cgame.qvm", &nChkSum1) == 1);
+		bGood = (FS_FileIsInPAK("vm/cgame.qvm", cl->compat, &nChkSum1) == 1);
 		if (bGood)
-			bGood = (FS_FileIsInPAK("vm/ui.qvm", &nChkSum2) == 1);
+			bGood = (FS_FileIsInPAK("vm/ui.qvm", cl->compat, &nChkSum2) == 1);
 
 		nClientPaks = Cmd_Argc();
 
@@ -1344,7 +1344,13 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 
 			// must be at least 6: "cl_paks cgame ui @ firstref ... numChecksums"
 			// numChecksums is encoded
-			if (nClientPaks < 6) {
+#if 1
+			// protocol 43 doesn't include numChecksums
+			if ((cl->compat && nClientPaks < 5) || (!cl->compat && nClientPaks < 6))
+#else
+			if (nClientPaks < 6)
+#endif
+			{
 				bGood = qfalse;
 				break;
 			}
@@ -1374,6 +1380,11 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 			// store number to compare against (minus one cause the last is the number of checksums)
 			nClientPaks = i - 1;
 
+			#if 1
+			// TODO: can probably start compat at index 2
+			if(!cl->compat)
+			{
+			#endif
 			// make sure none of the client check sums are the same
 			// so the client can't send 5 the same checksums
 			for (i = 0; i < nClientPaks; i++) {
@@ -1390,9 +1401,12 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 			}
 			if (bGood == qfalse)
 				break;
+			#if 1
+			}
+			#endif
 
 			// get the pure checksums of the pk3 files loaded by the server
-			pPaks = FS_LoadedPakPureChecksums();
+			pPaks = FS_LoadedPakPureChecksums( cl->compat );
 			Cmd_TokenizeString( pPaks );
 			nServerPaks = Cmd_Argc();
 			if (nServerPaks > 1024)
@@ -1418,6 +1432,10 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 				break;
 			}
 
+			#if 1
+			if(!cl->compat)
+			{
+			#endif
 			// check if the number of checksums was correct
 			nChkSum1 = sv.checksumFeed;
 			for (i = 0; i < nClientPaks; i++) {
@@ -1428,6 +1446,9 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 				bGood = qfalse;
 				break;
 			}
+			#if 1
+			}
+			#endif
 
 			// break out
 			break;
@@ -1616,6 +1637,7 @@ static ucmd_t ucmds[] = {
 	{"userinfo", SV_UpdateUserinfo_f},
 	{"disconnect", SV_Disconnect_f},
 	{"cp", SV_VerifyPaks_f},
+	{"cl_paks", SV_VerifyPaks_f},
 	{"vdr", SV_ResetPureClient_f},
 	{"download", SV_BeginDownload_f},
 	{"nextdl", SV_NextDownload_f},
