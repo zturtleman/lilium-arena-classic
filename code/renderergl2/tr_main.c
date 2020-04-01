@@ -1094,7 +1094,11 @@ qboolean R_GetPortalOrientations( drawSurf_t *drawSurf, int entityNum,
 		VectorSubtract( vec3_origin, camera->axis[1], camera->axis[1] );
 
 		// optionally rotate
-		if ( e->e.oldframe ) {
+#if 0
+		// not supported by Q3 1.16
+		if ( e->e.oldframe )
+#endif
+		{
 			// if a speed is specified
 			if ( e->e.frame ) {
 				// continuous rotate
@@ -1111,12 +1115,14 @@ qboolean R_GetPortalOrientations( drawSurf_t *drawSurf, int entityNum,
 				CrossProduct( camera->axis[0], camera->axis[1], camera->axis[2] );
 			}
 		}
+#if 0
 		else if ( e->e.skinNum ) {
 			d = e->e.skinNum;
 			VectorCopy( camera->axis[1], transformed );
 			RotatePointAroundVector( camera->axis[1], camera->axis[0], transformed, d );
 			CrossProduct( camera->axis[0], camera->axis[1], camera->axis[2] );
 		}
+#endif
 		*mirror = qfalse;
 		return qtrue;
 	}
