@@ -1982,6 +1982,10 @@ CL_ResetPureClientAtServer
 =================
 */
 void CL_ResetPureClientAtServer( void ) {
+#if 1
+	if(clc.compat)
+		return;
+#endif
 	CL_AddReliableCommand("vdr", qfalse);
 }
 

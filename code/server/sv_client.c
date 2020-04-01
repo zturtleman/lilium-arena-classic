@@ -1636,9 +1636,9 @@ typedef struct {
 static ucmd_t ucmds[] = {
 	{"userinfo", SV_UpdateUserinfo_f},
 	{"disconnect", SV_Disconnect_f},
-	{"cp", SV_VerifyPaks_f},
-	{"cl_paks", SV_VerifyPaks_f},
-	{"vdr", SV_ResetPureClient_f},
+	{"cl_paks", SV_VerifyPaks_f}, // protocol 43 only
+	{"cp", SV_VerifyPaks_f}, // not in protocol 43
+	{"vdr", SV_ResetPureClient_f}, // not in protocol 43
 	{"download", SV_BeginDownload_f},
 	{"nextdl", SV_NextDownload_f},
 	{"stopdl", SV_StopDownload_f},
