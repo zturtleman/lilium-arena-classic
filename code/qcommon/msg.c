@@ -1840,7 +1840,6 @@ void MSG_WriteDeltaPlayerstate( msg_t *msg, struct playerState_s *from, struct p
 MSG_ReadDeltaPlayerstate
 ===================
 */
-//#define SKIP_PLAYER // TMP: HACK: skip first player state to see how far I can get.
 void MSG_ReadDeltaPlayerstate (msg_t *msg, playerState_t *from, playerState_t *to ) {
 	int			i, lc = 0;
 	int			bits;
@@ -1887,31 +1886,10 @@ void MSG_ReadDeltaPlayerstate (msg_t *msg, playerState_t *from, playerState_t *t
 			Com_Error(ERR_DROP, "invalid playerState field count");
 	}
 
-#ifdef SKIP_PLAYER
-	int skipBits = Cvar_VariableIntegerValue( "skipPlayerBits" );
-	if ( !skipBits ) {
-		// 300 get farther but not correct size.
-		skipBits = 300;
-	}
-	while ( skipBits > 0 ) {
-		if ( skipBits >= 32 ) {
-			MSG_ReadBits( msg, 32 );
-			skipBits -= 32;
-		} else {
-			MSG_ReadBits( msg, skipBits );
-			skipBits = 0;
-		}
-	}
-#endif
-
 	for ( i = 0, field = playerStateFields ; i < lc ; i++, field++ ) {
 		fromF = (int *)( (byte *)from + field->offset );
 		toF = (int *)( (byte *)to + field->offset );
 
-#ifdef SKIP_PLAYER
-		// no change
-		*toF = *fromF;
-#else
 		if ( ! MSG_ReadBits( msg, 1 ) ) {
 			// no change
 			*toF = *fromF;
@@ -1942,7 +1920,6 @@ void MSG_ReadDeltaPlayerstate (msg_t *msg, playerState_t *from, playerState_t *t
 				}
 			}
 		}
-#endif
 	}
 	#ifdef ELITEFORCE
 	if(!msg->compat)
