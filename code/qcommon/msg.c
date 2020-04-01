@@ -1442,7 +1442,7 @@ void MSG_ReadDeltaEntity( msg_t *msg, entityState_t *from, entityState_t *to,
 		// Read in the vector index and check whether there is a predefined one or not.
 		vectorIndex = MSG_ReadBits( msg, PVECTOR_BITS );
 
-		if ( print ) {
+		if (print) {
 			if (vectorIndex == PVECTOR_NUM) {
 				Com_Printf( "<uc> " );
 			} else {

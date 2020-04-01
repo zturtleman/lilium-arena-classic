@@ -1214,7 +1214,6 @@ void CL_PlayDemo_f( void ) {
 	while ( clc.state >= CA_CONNECTED && clc.state < CA_PRIMED ) {
 		CL_ReadDemoMessage();
 	}
-	Com_Printf( "DEBUG: CL_PlayDemo_f: Completed\n" );
 	// don't get the first snapshot this frame, to prevent the long
 	// time from the gamestate load from messing causing a time skip
 	clc.firstDemoFrameSkipped = qfalse;

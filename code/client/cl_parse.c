@@ -518,7 +518,6 @@ void CL_ParseGamestate( msg_t *msg, int demoFileOffset ) {
 			cl.gameState.stringOffsets[ i ] = cl.gameState.dataCount;
 			Com_Memcpy( cl.gameState.stringData + cl.gameState.dataCount, s, len + 1 );
 			cl.gameState.dataCount += len + 1;
-			Com_Printf( "DEBUG: config string %d: %s\n", i, cl.gameState.stringData + cl.gameState.stringOffsets[ i ] );
 		} else if ( cmd == svc_baseline ) {
 			newnum = MSG_ReadBits( msg, GENTITYNUM_BITS );
 			if ( newnum < 0 || newnum >= MAX_GENTITIES ) {
@@ -526,9 +525,7 @@ void CL_ParseGamestate( msg_t *msg, int demoFileOffset ) {
 			}
 			Com_Memset (&nullstate, 0, sizeof(nullstate));
 			es = &cl.entityBaselines[ newnum ];
-			Com_Printf( "DEBUG: entity baseline for %d\n", newnum );
 			MSG_ReadDeltaEntity( msg, &nullstate, es, newnum );
-			// ### ZTM: FIXME: The above fails? read too much or too little?
 		} else {
 			//Com_Error( ERR_DROP, "CL_ParseGamestate: bad command byte at offset %d", msg->readcount - 1 );
 			Com_Printf( "WARNING: CL_ParseGamestate: bad command byte (%d) at offset %d of %d (demo file offset %d + bit %d)\n",
@@ -919,6 +916,7 @@ void CL_ParseServerMessage( msg_t *msg, int demoFileOffset ) {
 	//
 	while ( 1 ) {
 		if ( msg->readcount > msg->cursize ) {
+			// ZTM: FIXME: This gets hit when connecting to server but it should find EOF.
 			//Com_Error (ERR_DROP,"CL_ParseServerMessage: read past end of server message");
 			Com_Printf( "WARNING: CL_ParseServerMessage: read past end of server message\n");
 			break;

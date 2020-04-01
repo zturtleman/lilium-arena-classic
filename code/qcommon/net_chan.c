@@ -237,7 +237,6 @@ void Netchan_TransmitNextFragment( netchan_t *chan ) {
 	#ifdef ELITEFORCE
 	if(chan->compat)
 	{
-		// ### ZTM: FIXME: uncomment the xor code?
 		// the original eliteforce uses the old scrambling routines only slightly modified.	
 		Netchan_ScramblePacket( &send );
 	}
