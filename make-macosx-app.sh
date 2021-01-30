@@ -151,8 +151,8 @@ UI="ui"
 
 RENDERER_OPENGL="${IOQ3_RENDERER_PREFIX}opengl"
 
-EXECUTABLE_NAME="liliumarena"
-DEDICATED_NAME="liliumarena-server"
+EXECUTABLE_NAME="liliumarenaclassic"
+DEDICATED_NAME="liliumarenaclassic-server"
 
 CGAME_NAME="${CGAME}.dylib"
 GAME_NAME="${GAME}.dylib"
@@ -167,7 +167,7 @@ PKGINFO="APPL????"
 
 OBJROOT="build"
 #BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-${CURRENT_ARCH}"
-PRODUCT_NAME="Lilium Arena"
+PRODUCT_NAME="Lilium Arena Classic"
 WRAPPER_EXTENSION="app"
 WRAPPER_NAME="${PRODUCT_NAME}.${WRAPPER_EXTENSION}"
 CONTENTS_FOLDER_PATH="${WRAPPER_NAME}/Contents"
@@ -239,12 +239,12 @@ done
 cd `dirname $0`
 
 if [ ! -f Makefile ]; then
-	echo "$0 must be run from the Lilium Arena build directory"
+	echo "$0 must be run from the Lilium Arena Classic build directory"
 	exit 1
 fi
 
 if [ "${IOQ3_CLIENT_ARCHS}" == "" ]; then
-	echo "$0: no Lilium Arena binary architectures were found for target '${TARGET_NAME}'"
+	echo "$0: no Lilium Arena Classic binary architectures were found for target '${TARGET_NAME}'"
 	exit 1
 fi
 

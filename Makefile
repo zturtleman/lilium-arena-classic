@@ -111,15 +111,15 @@ VERSION=1.36
 endif
 
 ifndef CLIENTBIN
-CLIENTBIN=liliumarena
+CLIENTBIN=liliumarenaclassic
 endif
 
 ifndef SERVERBIN
-SERVERBIN=liliumarena-server
+SERVERBIN=liliumarenaclassic-server
 endif
 
 ifndef RENDERER_PREFIX
-RENDERER_PREFIX=liliumarena-renderer-
+RENDERER_PREFIX=liliumarenaclassic-renderer-
 endif
 
 ifndef BASEGAME

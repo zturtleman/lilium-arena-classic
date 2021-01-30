@@ -3,9 +3,9 @@ ARCH=$1
 ERROR=0
 
 # Adjust these for the project.
-CLIENTBIN=liliumarena
-SERVERBIN=liliumarena-server
-RENDERER_PREFIX=liliumarena-renderer-
+CLIENTBIN=liliumarenaclassic
+SERVERBIN=liliumarenaclassic-server
+RENDERER_PREFIX=liliumarenaclassic-renderer-
 
 # Install directory for Spearmint SDL2 builds (i.e., /home/zack/Local/SDL-2.0.X).
 DIR=/home/zack/Local
