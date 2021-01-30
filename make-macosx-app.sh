@@ -151,8 +151,8 @@ UI="ui"
 
 RENDERER_OPENGL="${IOQ3_RENDERER_PREFIX}opengl"
 
-EXECUTABLE_NAME="ioquake3"
-DEDICATED_NAME="ioq3ded"
+EXECUTABLE_NAME="liliumarena"
+DEDICATED_NAME="liliumarena-server"
 
 CGAME_NAME="${CGAME}.dylib"
 GAME_NAME="${GAME}.dylib"
@@ -167,7 +167,7 @@ PKGINFO="APPL????"
 
 OBJROOT="build"
 #BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-${CURRENT_ARCH}"
-PRODUCT_NAME="Lilium Quake3"
+PRODUCT_NAME="Lilium Arena"
 WRAPPER_EXTENSION="app"
 WRAPPER_NAME="${PRODUCT_NAME}.${WRAPPER_EXTENSION}"
 CONTENTS_FOLDER_PATH="${WRAPPER_NAME}/Contents"
@@ -239,12 +239,12 @@ done
 cd `dirname $0`
 
 if [ ! -f Makefile ]; then
-	echo "$0 must be run from the ioquake3 build directory"
+	echo "$0 must be run from the Lilium Arena build directory"
 	exit 1
 fi
 
 if [ "${IOQ3_CLIENT_ARCHS}" == "" ]; then
-	echo "$0: no ioquake3 binary architectures were found for target '${TARGET_NAME}'"
+	echo "$0: no Lilium Arena binary architectures were found for target '${TARGET_NAME}'"
 	exit 1
 fi
 

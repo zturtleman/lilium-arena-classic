@@ -111,15 +111,15 @@ VERSION=1.36
 endif
 
 ifndef CLIENTBIN
-CLIENTBIN=ioquake3
+CLIENTBIN=liliumarena
 endif
 
 ifndef SERVERBIN
-SERVERBIN=ioq3ded
+SERVERBIN=liliumarena-server
 endif
 
 ifndef RENDERER_PREFIX
-RENDERER_PREFIX=renderer_
+RENDERER_PREFIX=liliumarena-renderer-
 endif
 
 ifndef BASEGAME
