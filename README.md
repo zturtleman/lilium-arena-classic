@@ -115,6 +115,7 @@ Makefile.local:
   BUILD_STANDALONE     - build binaries suited for stand-alone games
   SERVERBIN            - rename 'ioq3ded' server binary
   CLIENTBIN            - rename 'ioquake3' client binary
+  RENDERER_PREFIX      - rename 'renderer_' renderer binaries
   USE_RENDERER_DLOPEN  - build and use the renderer in a library
   USE_YACC             - use yacc to update code/tools/lcc/lburg/gram.c
   BASEGAME             - rename 'baseq3'
