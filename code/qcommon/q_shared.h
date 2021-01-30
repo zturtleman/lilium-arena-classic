@@ -31,9 +31,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define BASEGAME					"foobar"
   #define CLIENT_WINDOW_TITLE		"changeme"
   #define CLIENT_WINDOW_MIN_TITLE	"changeme2"
-  #define HOMEPATH_NAME_UNIX		".foo"
-  #define HOMEPATH_NAME_WIN			"FooBar"
-  #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
+
+  // GNU/Linux: $HOME/.local/share/homepath-name (lower case and spaces replaced with hyphens)
+  // MacOS: $HOME/Library/Application Support/Homepath Name
+  // Windows: %APPDATA%\Homepath Name
+  #define HOMEPATH_NAME				"FooBar"
+
 //  #define STEAMPATH_NAME			"Foo Bar"
 //  #define STEAMPATH_APPID         ""
   #define GAMENAME_FOR_MASTER		"foobar"	// must NOT contain whitespace
@@ -41,13 +44,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define CINEMATICS_INTRO		"intro.roq"
 //  #define LEGACY_PROTOCOL	// You probably don't need this for your standalone game
 #else
-  #define PRODUCT_NAME				"ioq3"
+  #define PRODUCT_NAME				"Lilium Arena"
   #define BASEGAME					"baseq3"
-  #define CLIENT_WINDOW_TITLE		"ioquake3"
-  #define CLIENT_WINDOW_MIN_TITLE	"ioq3"
-  #define HOMEPATH_NAME_UNIX		".q3a"
-  #define HOMEPATH_NAME_WIN			"Quake3"
-  #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
+  #define CLIENT_WINDOW_TITLE		"Lilium Arena"
+  #define CLIENT_WINDOW_MIN_TITLE	"Lilium Arena"
+
+  // GNU/Linux: $HOME/.local/share/homepath-name (lower case and spaces replaced with hyphens)
+  // MacOS: $HOME/Library/Application Support/Homepath Name
+  // Windows: %APPDATA%\Homepath Name
+  #define HOMEPATH_NAME				"Lilium Arena"
+
   #define STEAMPATH_NAME			"Quake 3 Arena"
   #define STEAMPATH_APPID			"2200"
   #define GOGPATH_ID				"1441704920"
@@ -66,6 +72,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define LEGACY_HEARTBEAT_FOR_MASTER	"QuakeArena-1"
 
 #define BASETA				"missionpack"
+
+#ifndef RENDERER_PREFIX
+  #define RENDERER_PREFIX "liliumarena-renderer-"
+#endif
 
 #ifndef PRODUCT_VERSION
   #ifdef ELITEFORCE
