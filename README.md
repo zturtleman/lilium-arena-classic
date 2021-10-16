@@ -20,7 +20,7 @@ The Visual Studio and Xcode project files are not supported.
 
 ## Discussion
 
-  * [Discord (Fragmint★Wonderland)](https://discord.gg/7J2pjGD)
+  * [Discord (Clover.moe Community)](https://discord.gg/7J2pjGD)
 
 
 ## License
