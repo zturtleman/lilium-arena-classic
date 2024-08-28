@@ -14,7 +14,7 @@ The Visual Studio and Xcode project files are not supported.
 
 ## Discussion
 
-  * [Discord (Clover.moe Community)](https://discord.gg/7J2pjGD)
+  * [Discussion / Technical support](https://clover.moe/open-source)
 
 
 ## License
