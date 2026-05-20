@@ -144,15 +144,15 @@ VERSION=1.36
 endif
 
 ifndef CLIENTBIN
-CLIENTBIN=liliumarenaclassic
+CLIENTBIN=lilium-arena-classic
 endif
 
 ifndef SERVERBIN
-SERVERBIN=liliumarenaclassic-server
+SERVERBIN=lilium-arena-classic-server
 endif
 
 ifndef RENDERER_PREFIX
-RENDERER_PREFIX=liliumarenaclassic-renderer-
+RENDERER_PREFIX=lilium-arena-classic-renderer-
 endif
 
 ifndef BASEGAME
@@ -800,6 +800,8 @@ ifdef MINGW
     BASE_CFLAGS += -m64
   endif
 
+  BASE_CFLAGS += -DUNICODE -D_UNICODE
+
   # libmingw32 must be linked before libSDLmain
   CLIENT_LIBS += -lmingw32
   RENDERER_LIBS += -lmingw32
@@ -1170,7 +1172,7 @@ endif
 TARGETS =
 
 ifndef FULLBINEXT
-  FULLBINEXT=.$(ARCH)$(BINEXT)
+  FULLBINEXT=_$(ARCH)$(BINEXT)
 endif
 
 ifndef SHLIBNAME
@@ -2979,6 +2981,7 @@ $(B)/renderergl1/%.o: $(RGL1DIR)/%.c
 $(B)/renderergl1/tr_altivec.o: $(RGL1DIR)/tr_altivec.c
 	$(DO_REF_CC_ALTIVEC)
 
+.PRECIOUS: $(B)/renderergl2/glsl/%.c
 $(B)/renderergl2/glsl/%.c: $(RGL2DIR)/glsl/%.glsl $(STRINGIFY)
 	$(DO_REF_STR)
 
